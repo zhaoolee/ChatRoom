@@ -1,0 +1,189 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+
+{% block css_link %}
+
+
+    <link rel="stylesheet" href="{% static 'css/chatroom/happy.css' %}">
+
+{% endblock css_link %}
+
+
+
+{% block nav_js %}
+<script>
+
+    $(function () {
+
+        $("#send").click(function () {
+
+            var input_info = $("#input_info").val();
+
+            if (input_info.length < 1) {
+                alert("请输入字符后发送");
+                return;
+            } else if (input_info.length > 200) {
+                alert("每次发送不可以超出200个字符哈~");
+                return;
+            }
+            else {
+                // 获取csrftoken的值
+                var csrf_value = $('#csrfmiddlewaretoken').text();
+                var user_id = $("#user_id").text();
+                var user_name = $("#user_name").text();
+
+                $.ajax({
+
+                    'url': '/chatroom/save_chat_log/',
+                    'data': {
+                        'chat_content': input_info,
+                        'user_id': user_id,
+                        'user_name': user_name,
+                        'user_ip': '127.127.127.127',
+                        'csrfmiddlewaretoken': csrf_value
+                    },
+                    'type': 'post',
+                    'async': false,
+                    'success': function (data) {
+
+
+                    }
+                });
+                $("#input_info").val("");
+                console.log($("#show_info").scrollTop());
+            }
+        })
+    })
+
+
+</script>
+
+
+<script>
+
+    var user_id = $("#user_id").text();
+    var user_name = $("#user_name").text();
+
+    $(function () {
+        var last_id = 0;
+        var csrf_value2 = $('#csrfmiddlewaretoken').text();
+        function update_info() {
+            // ajax 获取最新数据
+            $.ajax({
+                'url': '/chatroom/get_near_log/',
+                'data':{"last_id":last_id,'csrfmiddlewaretoken': csrf_value2},
+                'type':'post',
+                'async': false,
+                'success':function (data) {
+                    if (parseInt(last_id) == parseInt(JSON.parse(data.data).last_id)){
+                        return;
+
+                    }
+
+                    //获取后台传过来的id值,并将值存储到全局变量中
+                    last_id = JSON.parse(data.data).last_id;
+                    // 将内容读取,并打印
+                    content = JSON.parse(data.data).info;
+                    for (var i=0; i< content.length; i++){
+
+
+                        if (parseInt(content[i].user_id) == parseInt($("#user_id").text())){
+
+                            var html = "<div class='my_info'><span>"+content[i].user_name+"</span></div>";
+                            html = html + "<div class='my_one_info'>"+content[i].mess+"</div>";
+                            $("#content").append(html);
+
+
+                        }else{
+                            var html = "<div class='other_info'><span>"+content[i].user_name+"</span></div>";
+                            html = html + "<div class='other_one_info'>"+content[i].mess+"</div>";
+                            $("#content").append(html);
+                        }
+                        $("#show_info").scrollTop($("#content").height())
+                    }
+                }
+            })
+        }
+        update_info();
+        setInterval(update_info, 1000);
+    })
+</script>
+
+<script>
+
+    $(function () {
+
+        //监听键盘点击
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13){
+                $("#send").click();
+            }
+        })
+    })
+</script>
+
+<script>
+
+    $(function () {
+
+        $("#change_name").click(function () {
+            // 获取新名称
+
+            var new_name = String($("#new_name").val());
+            // 检查新名称是否合法
+            // 如果合法
+            if (new_name.length<11 && new_name.length>0){
+                console.log(new_name);
+
+                $("#user_name").text(new_name);
+                $("#new_name").val("")
+
+            }else{
+
+                alert("昵称长度应为1-10,请重新输入");
+                $("#new_name").val("")
+
+            }
+
+
+        })
+
+
+    })
+
+</script>
+
+{% endblock nav_js %}
+
+{% block nav %}
+<div id="main_form">
+
+    <div class="my_nike_name">我的昵称:<span id="user_name">{{user_name}}</span><span><button id="change_name">更名</button><input type="text" id="new_name"></span></div>
+
+
+
+
+
+    <div id="show_info">
+
+        <div id="content">
+
+        </div>
+    </div>
+    <br>
+
+    <div class="my_nike_name">消息</div>
+    <input type="text" id="input_info">
+
+    <button id="send">发送消息</button>
+
+    <div id="user_id" style="display: none">{{user_id}}</div>
+    <div id="user_ip" style="display: none">{{user_ip}}</div>
+
+    <span id ="csrfmiddlewaretoken" style="display: none">{{csrf_token}}</span>
+
+</div>
+
+
+{% endblock nav %}
+
