@@ -4,19 +4,19 @@ Python实现多人在线匿名聊天的小程序
 
 > 最近看到好多设计类网站,都提供了多人在线匿名聊天的小功能,感觉很有意思,于是基于python的django框架自己写了一个,支持手动实时更名,最下方提供了完整的源码.
 
-####在线聊天地址(无需登录,开一个窗口,代表一个用户):
+#### 在线聊天地址(无需登录,开一个窗口,代表一个用户):
 ```
 http://zhaozhaoli.vicp.io/chatroom/happy/
 ```
 
 > 移动端聊天效果图:
-![移动端聊天.PNG](http://upload-images.jianshu.io/upload_images/3203841-8058864e5dd341c0.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+>![移动端聊天.PNG](http://upload-images.jianshu.io/upload_images/3203841-8058864e5dd341c0.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 网页版聊天效果图:
-![网页版聊天.png](http://upload-images.jianshu.io/upload_images/3203841-1c253d5a894728ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+> ![网页版聊天.png](http://upload-images.jianshu.io/upload_images/3203841-1c253d5a894728ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 
-####实现思路:
+#### 实现思路:
 - 发送的消息通过ajax先写入数据库,通过ajax的循环请求,将写入数据库的消息显示到前端界面.
 
 前端核心代码:
